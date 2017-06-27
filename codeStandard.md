@@ -1,1 +1,3 @@
-#Hello world
+# 命名
+1. 采用驼峰式命名；
+2. 自定义数据类型（enum，struct，class）采用*全部大写*；
