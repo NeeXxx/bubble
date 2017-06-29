@@ -1,4 +1,7 @@
 #include "board.h"
+#include <QPainter>
+#include <QImage>
+#include <QPixmap>
 
 board::board():p1(),p2()
 {
@@ -69,7 +72,130 @@ void board::countMapForDraw()
 
 void board::paintEvent(QPaintEvent* event)
 {
+    QPainter painter(this);
+    painter.translate(20,100);
+    QPixmap ground;
+    ground.load("../Bubbles/images/ground.png");
+    painter.drawPixmap(0,0,900,900,ground);
     countMapForDraw();
+    for (int i=1;i<10;i++)
+    {
+        for (int j=1;j<10;j++)
+        {
+            substance judge=mapForDraw[i][j];
+            texture image;
+            if (judge.us==tree&&judge.us==water&&judge.us==house)
+            {
+                underSubstance tmp=judge.us;
+                switch(tmp)
+                {
+                case tree:
+                {
+                    image=t_tree;
+                    break;
+                }
+                case water:
+                {
+                    image=t_nothing;
+                    break;
+                }
+                case house:
+                    image=t_house;
+                    break;
+                }
+            }
+            else
+            {
+                aboveSubstance tmp=judge.as;
+                switch(tmp)
+                {
+                case bomb:
+                {
+                    image=t_bomb;
+                }
+                case arrowDown:
+                case arrowLeft:
+                case arrowRight:
+                case arrowUp:
+                {
+                    image=t_flame;
+                }
+                case player1:
+                {
+                    image=t_player1;
+                }
+                case player2:
+                {
+                    image=t_player2;
+                }
+                case wood:
+                {
+                    image=t_wood;
+                }
+                case air:
+                {
+                    image=t_nothing;
+                }
+                }
+            }
+            switch(image)
+            {
+            case t_nothing:
+            {
+                break;
+            }
+            case t_player1:
+            {
+                QPixmap pix;
+                pix.load("../Bubbles/images/player1.png");
+                painter.drawPixmap(100*i-100,100*j-120,100,120,pix);
+                break;
+            }
+            case t_player2:
+            {
+                QPixmap pix;
+                pix.load("../Bubbles/images/player2.png");
+                painter.drawPixmap(100*i-100,100*j-120,100,120,pix);
+                break;
+            }
+            case t_tree:
+            {
+                QPixmap pix;
+                pix.load("../Bubbles/images/tree.png");
+                painter.drawPixmap(100*i-100,100*j-120,100,120,pix);
+                break;
+            }
+            case t_wood:
+            {
+                QPixmap pix;
+                pix.load("../Bubbles/images/wood.png");
+                painter.drawPixmap(100*i-100,100*j-120,100,120,pix);
+                break;
+            }
+            case t_bomb:
+            {
+                QPixmap pix;
+                pix.load("../Bubbles/images/bomb.png");
+                painter.drawPixmap(100*i-100,100*j-120,100,120,pix);
+                break;
+            }
+            case t_house:
+            {
+                QPixmap pix;
+                pix.load("../Bubbles/images/house.png");
+                painter.drawPixmap(100*i-100,100*j-120,100,120,pix);
+                break;
+            }
+            case t_flame:
+            {
+                QPixmap pix;
+                pix.load("../Bubbles/images/flame.png");
+                painter.drawPixmap(100*i-100,100*j-120,100,120,pix);
+                break;
+            }
+            }
+        }
+    }
 }
 
 void board::keyPressEvent(QKeyEvent* event)
