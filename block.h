@@ -1,39 +1,74 @@
-#include "block.h"
+#ifndef BLOCK_H
+#define BLOCK_H
 
-void block::destroyAbove()
-{
-    a=aAir;
-}
+enum underSubstance{water,ground,bridge,house,tree};
+enum aboveSubstance{bomb,arrowUp,arrowDown,arrowLeft,arrowRight,
+                    player1,player2,
+                    wood,air};
 
-void block::addAbove(above ta)
+//希望底部的东西是不可改变的
+class under
 {
-    a=ta;
-}
+    underSubstance s;
+    bool canBeIn;
+public:
+    under(underSubstance us,bool cbi):s(us),canBeIn(cbi) {}
+    bool inable() { return canBeIn; }
+    underSubstance substance() { return s; }
+};
 
-bool block::inable()
-{
-    return under.inable() && above.inable();
-}
+const under uWater(water,false),
+            uHouse(house,false),//不可进入
+            uGround(ground,true),
+            uTree(tree,true),
+            uBridge(bridge,true);//可进入
 
-bool block::pushable()
+class above
 {
-    return above.pushable();
-}
+    aboveSubstance s;
+    bool canBeIn;
+    bool canBePush;
+public:
+    above(aboveSubstance as,bool cbi,bool cbp):s(as),canBeIn(cbi),canBePush(cbp) {}
+    bool pushable() { return canBePush; }
+    bool inable() { return canBeIn; }
+    aboveSubstance substance() { return s; }
+};
 
-bool block::hidable()
-{
-    return under.s==tree;
-}
+const above aBomb(bomb,false,false),//不可推
+            aWood(wood,false,true),//可推        //不可进入
+            aArrowUp(arrowUp,true,false),
+            aArrowDown(arrowDown,true,false),
+            aArrowLeft(arrowLeft,true,false),
+            aArrowRight(arrowRight,true,false),
+            aPlayer1(player1,true,false),
+            aPlayer2(player1,true,false),
+            aAir(air,true,false);               //可进入
 
-bool block::haveAbove()
+class substance
 {
-    return above!=air;
-}
+public:
+    underSubstance us;
+    aboveSubstance as;
+    substance(underSubstance tus,aboveSubstance tas):us(tus),as(tas) {}
+};
 
-substance block::appearance()
+substance temp[10][10];
+
+class block
 {
-    if(hidable())
-        return substance(u.substance(),air);
-    else
-        return substance(u.substance(),a.substance());
-}
+    under u;
+    above a;
+public:
+    block(under tu,above ta):u(tu),a(ta) {}
+    void destroyAbove();
+    void addAbove(above ta);
+    above getAbove() { return a; }
+    bool inable();
+    bool pushable();
+    bool hidable();
+    bool haveAbove();
+    substance appearance(); //画图必须调用appearance
+};
+
+#endif // BLOCK_H
